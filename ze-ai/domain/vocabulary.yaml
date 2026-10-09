@@ -1,0 +1,38 @@
+# The words of this domain. Human decisions only; the engine (app/) reads them.
+#
+# entities   the nouns questions are about, each with the cue phrases that
+#            signal it. Matched on word boundaries, case-insensitive; a cue
+#            ending in * matches any word starting with it ("purchas*").
+#            Recall over precision: a spurious match costs the planner a few
+#            tokens, a missing one can cost a wrongly refused question.
+#            Every entity must be claimed by at least one skill (boot check).
+# operations which question SHAPES this domain supports. The cues are generic
+#            English and live in the engine (app/skills/capability.py); choose
+#            from: lookup explain list aggregate rank compare trend forecast
+#            audit simulate resolve. Each must be claimed by a skill.
+# resolve    ids pulled out of the question text deterministically, before
+#            planning, and handed to skills as known context. Regex; group 1
+#            if present, else the whole match.
+# slots      what skills hand each other (manifest `requires` / `provides`).
+
+entities:
+  customer: [customer, customers, client, clients, company, companies, account, accounts, who is,
+             segment, segments, region, regions, enterprise, smb, mid market, contact, email,
+             signed up, signup, sign up, churn*, credit limit, active]
+  order: [order, orders, ordered, purchas*, bought, buy*, line item, line items, sku, product, products,
+          shipped, delivered, cancelled, canceled, refunded, placed, open orders]
+  revenue: [revenue, spend, spent, spending, sales, sold, money, worth, value, dollar*, euro*,
+            biggest, largest customers, top customers, how much]
+
+operations: [lookup, explain, list, aggregate, rank, compare, trend, resolve]
+
+resolve:
+  customer_id: {pattern: '(?i)\bcust-\d{4}\b', upper: true}
+  order_id: {pattern: '(?i)\bord-\d{5}\b', upper: true}
+  currency: {pattern: '(?i)\b(USD|EUR)\b', upper: true}
+
+slots:
+  - customer_profile
+  - order_history
+  - customer_spend
+  - top_customers

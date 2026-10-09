@@ -1,0 +1,391 @@
+{
+ "_generated": "by scripts/tool_spec.py generate from specs/customers.openapi.json. Do not edit: regenerate.",
+ "service": "customers",
+ "spec_sha256": "d5dcc718678604f19dd573ed1ed7cf84ce3aa41f36dc67161182f472869c5983",
+ "operations": {
+  "customers.getCustomer": {
+   "service": "customers",
+   "operation_id": "getCustomer",
+   "method": "GET",
+   "path": "/customers/{customer_id}",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "One customer by id",
+   "description": "A single customer.\n\n**Returns:** the customer's id, name, segment, region, currency, billing\nemail, signup date, credit limit and active flag. 404 if no such customer.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "customer_id": {
+      "type": "string",
+      "description": "Customer id, e.g. CUST-1001",
+      "title": "Customer Id",
+      "in": "path",
+      "spec_name": "customer_id"
+     }
+    },
+    "required": [
+     "customer_id"
+    ]
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "customer_id",
+      "key": "customer_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "Customer id, e.g. CUST-1001",
+       "title": "Customer Id"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "$ref": "#/schemas/customers.Customer"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  },
+  "customers.listCustomers": {
+   "service": "customers",
+   "operation_id": "listCustomers",
+   "method": "GET",
+   "path": "/customers",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "List customers, optionally filtered",
+   "description": "Customers matching every filter given, ordered by customer id. Use `q` to\nfind a customer by (part of) its name.\n\n**Returns:** a list of customers with id, name, segment, region, currency,\nbilling email, signup date, credit limit and whether they are active.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "q": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Case-insensitive substring of the customer name",
+      "title": "Q",
+      "in": "query",
+      "spec_name": "q"
+     },
+     "segment": {
+      "anyOf": [
+       {
+        "enum": [
+         "enterprise",
+         "mid_market",
+         "smb"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only this segment",
+      "title": "Segment",
+      "in": "query",
+      "spec_name": "segment"
+     },
+     "region": {
+      "anyOf": [
+       {
+        "enum": [
+         "NA",
+         "EU",
+         "APAC"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only this region",
+      "title": "Region",
+      "in": "query",
+      "spec_name": "region"
+     },
+     "active": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only active (true) or churned (false) customers",
+      "title": "Active",
+      "in": "query",
+      "spec_name": "active"
+     },
+     "limit": {
+      "type": "integer",
+      "maximum": 200,
+      "minimum": 1,
+      "description": "Maximum customers to return",
+      "default": 50,
+      "title": "Limit",
+      "in": "query",
+      "spec_name": "limit"
+     }
+    },
+    "required": []
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "q",
+      "key": "q",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Case-insensitive substring of the customer name",
+       "title": "Q"
+      }
+     },
+     {
+      "name": "segment",
+      "key": "segment",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "enterprise",
+          "mid_market",
+          "smb"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only this segment",
+       "title": "Segment"
+      }
+     },
+     {
+      "name": "region",
+      "key": "region",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "NA",
+          "EU",
+          "APAC"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only this region",
+       "title": "Region"
+      }
+     },
+     {
+      "name": "active",
+      "key": "active",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "boolean"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only active (true) or churned (false) customers",
+       "title": "Active"
+      }
+     },
+     {
+      "name": "limit",
+      "key": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 200,
+       "minimum": 1,
+       "description": "Maximum customers to return",
+       "default": 50,
+       "title": "Limit"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "type": "array",
+    "items": {
+     "$ref": "#/schemas/customers.Customer"
+    },
+    "title": "Response Listcustomers"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  }
+ },
+ "schemas": {
+  "customers.Customer": {
+   "properties": {
+    "customer_id": {
+     "type": "string",
+     "title": "Customer Id",
+     "description": "Customer id, e.g. CUST-1001"
+    },
+    "name": {
+     "type": "string",
+     "title": "Name",
+     "description": "Legal company name"
+    },
+    "segment": {
+     "type": "string",
+     "enum": [
+      "enterprise",
+      "mid_market",
+      "smb"
+     ],
+     "title": "Segment",
+     "description": "Sales segment: enterprise, mid_market or smb"
+    },
+    "region": {
+     "type": "string",
+     "enum": [
+      "NA",
+      "EU",
+      "APAC"
+     ],
+     "title": "Region",
+     "description": "Sales region: NA, EU or APAC"
+    },
+    "currency": {
+     "type": "string",
+     "title": "Currency",
+     "description": "ISO currency the customer is billed in"
+    },
+    "email": {
+     "type": "string",
+     "title": "Email",
+     "description": "Billing contact email"
+    },
+    "signup_date": {
+     "type": "string",
+     "title": "Signup Date",
+     "description": "Date the customer signed up (YYYY-MM-DD)"
+    },
+    "credit_limit": {
+     "type": "number",
+     "title": "Credit Limit",
+     "description": "Credit limit in the customer's currency"
+    },
+    "active": {
+     "type": "boolean",
+     "title": "Active",
+     "description": "False once the customer has churned"
+    }
+   },
+   "type": "object",
+   "required": [
+    "customer_id",
+    "name",
+    "segment",
+    "region",
+    "currency",
+    "email",
+    "signup_date",
+    "credit_limit",
+    "active"
+   ],
+   "title": "Customer"
+  },
+  "customers.HTTPValidationError": {
+   "properties": {
+    "detail": {
+     "items": {
+      "$ref": "#/schemas/customers.ValidationError"
+     },
+     "type": "array",
+     "title": "Detail"
+    }
+   },
+   "type": "object",
+   "title": "HTTPValidationError"
+  },
+  "customers.ValidationError": {
+   "properties": {
+    "loc": {
+     "items": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       }
+      ]
+     },
+     "type": "array",
+     "title": "Location"
+    },
+    "msg": {
+     "type": "string",
+     "title": "Message"
+    },
+    "type": {
+     "type": "string",
+     "title": "Error Type"
+    }
+   },
+   "type": "object",
+   "required": [
+    "loc",
+    "msg",
+    "type"
+   ],
+   "title": "ValidationError"
+  }
+ }
+}

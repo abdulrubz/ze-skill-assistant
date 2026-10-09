@@ -1,0 +1,32 @@
+# Model prices in USD per 1,000,000 tokens, keyed by the MODEL ID the gateway
+# reports back in each response (response.model) -- not by endpoint name. Find
+# it in MLflow's endpoint config, or in the ledger's `model` column.
+#
+# Databricks pay-per-token endpoints bill in DBUs: convert to USD at your
+# contract's DBU rate and enter the result here.
+#
+# VERIFY rates before trusting the cost column: a stale rate silently corrupts
+# every number downstream. Rates are effective-dated; the tier chosen is the
+# last whose effective_from has passed in real time.
+#
+# A model with no entry reports tokens only (cost null), never $0: unpriced and
+# free are different facts.
+
+models:
+  # Used by the local dev gateway (scripts/mlflow_gateway.py dev-provision).
+  # Checked against https://ai.google.dev/gemini-api/docs/pricing on 2026-09-11.
+  gemini-3.8-flash:
+    - effective_from: "1970-01-01"
+      input: 0.75
+      output: 3.75
+      cached_input: 0.075
+    - effective_from: "2027-01-01"
+      input: 1.50
+      output: 7.50
+      cached_input: 0.15
+
+  # Example Databricks entry -- fill in from your contract, then uncomment.
+  # databricks-meta-llama-3-3-70b-instruct:
+  #   - effective_from: "1970-01-01"
+  #     input: 0.0
+  #     output: 0.0

@@ -1,0 +1,31 @@
+id: customer_profile
+kind: domain
+summary: Who a customer is -- profile, segment, region, credit terms -- and finding customers by name or attribute.
+answers:
+  - "tell me about customer CUST-1004"
+  - "who is Globex"
+  - "find the customer called Initech"
+  - "is there more than one customer named Stark"
+  - "which region is Acme in"
+  - "what is this customer's credit limit"
+  - "list our enterprise customers"
+  - "which customers are in EU"
+  - "which customers have churned"
+  - "how many active smb customers do we have"
+  - "what is the billing email for Wayne"
+  - "when did Hooli sign up"
+entities: [customer]
+operations: [lookup, list, aggregate, resolve]
+intents: [customer_profile, find_customer, list_customers]
+requires:
+  - {slot: customer_id, optional: true}
+provides: [customer_profile]
+cannot:
+  - "anything about orders, spend or revenue -- that is order analysis"
+caveats: []
+tool_grants:
+  - find_customers
+  - get_customer
+cost_class: low
+max_tool_steps: 4
+prompt: customer_profile.md

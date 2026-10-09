@@ -1,0 +1,34 @@
+# Target values for scripts/langfuse_eval.py `report` and `target`.
+#
+# A GATED score PASSES when its mean over the run is within `tolerance` of the target:
+#   higher-is-better scores:  mean >= target * (1 - tolerance)
+#   cost_usd (lower is better, per question):  mean <= target * (1 + tolerance)
+#
+# Human decisions, not measurements. `banks:` overrides per bank. `report` also
+# lists every question whose judge/overall is below 0.5, whatever the means say.
+
+tolerance: 0.10
+
+# Only these can fail a run: they measure the ANSWER. The rest are shown as info.
+gate:
+  - judge/correctness
+  - judge/completeness
+  - judge/no_fabrication
+  - judge/overall
+  - expect_substrings
+  - routing_correct
+
+scores:
+  answered: 1.00
+  not_degraded: 0.95
+  validation_clean: 0.85
+  budget_ok: 0.90
+  expect_substrings: 0.95
+  judge/correctness: 0.90
+  judge/completeness: 0.90
+  judge/no_fabrication: 0.95
+  judge/overall: 0.90
+  routing_correct: 0.95
+  cost_usd: 0.05          # per question, USD; ceiling
+
+banks: {}

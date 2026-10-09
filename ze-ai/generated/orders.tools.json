@@ -1,0 +1,845 @@
+{
+ "_generated": "by scripts/tool_spec.py generate from specs/orders.openapi.json. Do not edit: regenerate.",
+ "service": "orders",
+ "spec_sha256": "28265e92e1fd6951343a3b14bdba8a731ebc20dfbe9bef57d72592261c92be5b",
+ "operations": {
+  "orders.cancelOrder": {
+   "service": "orders",
+   "operation_id": "cancelOrder",
+   "method": "POST",
+   "path": "/orders/{order_id}/cancel",
+   "kind": "write",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "Cancel an order",
+   "description": "Cancels an order that has not shipped yet. A WRITE: ze-ai lists it as\navailable but never exposes it to a model (its tool layer is read-only).\n\n**Returns:** the cancelled order. 409 if it has already shipped.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "order_id": {
+      "type": "string",
+      "description": "Order id to cancel",
+      "title": "Order Id",
+      "in": "path",
+      "spec_name": "order_id"
+     }
+    },
+    "required": [
+     "order_id"
+    ]
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "order_id",
+      "key": "order_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "Order id to cancel",
+       "title": "Order Id"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "$ref": "#/schemas/orders.Order"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  },
+  "orders.getCustomerOrderSummary": {
+   "service": "orders",
+   "operation_id": "getCustomerOrderSummary",
+   "method": "GET",
+   "path": "/customers/{customer_id}/order-summary",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "Order totals for one customer",
+   "description": "Aggregates over one customer's orders. Revenue counts only orders that\nwere not cancelled or refunded, and is reported per currency.\n\n**Returns:** order counts, revenue per currency, open orders and the first\nand last order dates.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "customer_id": {
+      "type": "string",
+      "description": "Customer id, e.g. CUST-1001",
+      "title": "Customer Id",
+      "in": "path",
+      "spec_name": "customer_id"
+     }
+    },
+    "required": [
+     "customer_id"
+    ]
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "customer_id",
+      "key": "customer_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "Customer id, e.g. CUST-1001",
+       "title": "Customer Id"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "$ref": "#/schemas/orders.CustomerOrderSummary"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  },
+  "orders.getOrder": {
+   "service": "orders",
+   "operation_id": "getOrder",
+   "method": "GET",
+   "path": "/orders/{order_id}",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "One order with its lines",
+   "description": "A single order including every line.\n\n**Returns:** the order's id, customer id, date, status, currency, total and\nlines (sku, description, quantity, unit price, amount). 404 if not found.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "order_id": {
+      "type": "string",
+      "description": "Order id, e.g. ORD-10001",
+      "title": "Order Id",
+      "in": "path",
+      "spec_name": "order_id"
+     }
+    },
+    "required": [
+     "order_id"
+    ]
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "order_id",
+      "key": "order_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "Order id, e.g. ORD-10001",
+       "title": "Order Id"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "$ref": "#/schemas/orders.Order"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  },
+  "orders.getTopCustomers": {
+   "service": "orders",
+   "operation_id": "getTopCustomers",
+   "method": "GET",
+   "path": "/reports/top-customers",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "Customers ranked by spend",
+   "description": "Customers ranked by revenue from counted orders (not cancelled or\nrefunded) in one currency.\n\n**Returns:** rank, customer id, currency, total and order count. Customer\nids only -- look names up in the customers service.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "currency": {
+      "type": "string",
+      "description": "Rank within this currency (USD or EUR); totals are never mixed across currencies",
+      "title": "Currency",
+      "in": "query",
+      "spec_name": "currency"
+     },
+     "since": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only orders on or after this date (YYYY-MM-DD)",
+      "title": "Since",
+      "in": "query",
+      "spec_name": "since"
+     },
+     "until": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only orders on or before this date (YYYY-MM-DD)",
+      "title": "Until",
+      "in": "query",
+      "spec_name": "until"
+     },
+     "limit": {
+      "type": "integer",
+      "maximum": 50,
+      "minimum": 1,
+      "description": "How many customers to return",
+      "default": 10,
+      "title": "Limit",
+      "in": "query",
+      "spec_name": "limit"
+     }
+    },
+    "required": [
+     "currency"
+    ]
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "currency",
+      "key": "currency",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "description": "Rank within this currency (USD or EUR); totals are never mixed across currencies",
+       "title": "Currency"
+      }
+     },
+     {
+      "name": "since",
+      "key": "since",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only orders on or after this date (YYYY-MM-DD)",
+       "title": "Since"
+      }
+     },
+     {
+      "name": "until",
+      "key": "until",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only orders on or before this date (YYYY-MM-DD)",
+       "title": "Until"
+      }
+     },
+     {
+      "name": "limit",
+      "key": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 50,
+       "minimum": 1,
+       "description": "How many customers to return",
+       "default": 10,
+       "title": "Limit"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "type": "array",
+    "items": {
+     "$ref": "#/schemas/orders.TopCustomer"
+    },
+    "title": "Response Gettopcustomers"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  },
+  "orders.listOrders": {
+   "service": "orders",
+   "operation_id": "listOrders",
+   "method": "GET",
+   "path": "/orders",
+   "kind": "read",
+   "agent_tool": true,
+   "documented": true,
+   "deprecated": false,
+   "tags": [],
+   "summary": "List orders, newest first",
+   "description": "Orders matching every filter, newest first, without their lines (use\ngetOrder for lines).\n\n**Returns:** a list of orders with id, date, status, currency and total.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "customer_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only this customer's orders",
+      "title": "Customer Id",
+      "in": "query",
+      "spec_name": "customer_id"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "enum": [
+         "placed",
+         "paid",
+         "shipped",
+         "delivered",
+         "cancelled",
+         "refunded"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only orders in this status",
+      "title": "Status",
+      "in": "query",
+      "spec_name": "status"
+     },
+     "since": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Orders on or after this date (YYYY-MM-DD)",
+      "title": "Since",
+      "in": "query",
+      "spec_name": "since"
+     },
+     "until": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Orders on or before this date (YYYY-MM-DD)",
+      "title": "Until",
+      "in": "query",
+      "spec_name": "until"
+     },
+     "limit": {
+      "type": "integer",
+      "maximum": 500,
+      "minimum": 1,
+      "description": "Maximum orders to return",
+      "default": 50,
+      "title": "Limit",
+      "in": "query",
+      "spec_name": "limit"
+     }
+    },
+    "required": []
+   },
+   "agent": {
+    "inputs": [
+     {
+      "name": "customer_id",
+      "key": "customer_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only this customer's orders",
+       "title": "Customer Id"
+      }
+     },
+     {
+      "name": "status",
+      "key": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "placed",
+          "paid",
+          "shipped",
+          "delivered",
+          "cancelled",
+          "refunded"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only orders in this status",
+       "title": "Status"
+      }
+     },
+     {
+      "name": "since",
+      "key": "since",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Orders on or after this date (YYYY-MM-DD)",
+       "title": "Since"
+      }
+     },
+     {
+      "name": "until",
+      "key": "until",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Orders on or before this date (YYYY-MM-DD)",
+       "title": "Until"
+      }
+     },
+     {
+      "name": "limit",
+      "key": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 500,
+       "minimum": 1,
+       "description": "Maximum orders to return",
+       "default": 50,
+       "title": "Limit"
+      }
+     }
+    ],
+    "fixed": {},
+    "defaults": {},
+    "idempotency_key": null,
+    "unresolved_hints": []
+   },
+   "output_schema": {
+    "type": "array",
+    "items": {
+     "$ref": "#/schemas/orders.OrderSummary"
+    },
+    "title": "Response Listorders"
+   },
+   "success_codes": [
+    200
+   ],
+   "response_description": "Successful Response"
+  }
+ },
+ "schemas": {
+  "orders.CurrencyTotal": {
+   "properties": {
+    "currency": {
+     "type": "string",
+     "title": "Currency",
+     "description": "ISO currency"
+    },
+    "total": {
+     "type": "number",
+     "title": "Total",
+     "description": "Total of counted orders in this currency"
+    },
+    "order_count": {
+     "type": "integer",
+     "title": "Order Count",
+     "description": "Counted orders in this currency"
+    }
+   },
+   "type": "object",
+   "required": [
+    "currency",
+    "total",
+    "order_count"
+   ],
+   "title": "CurrencyTotal"
+  },
+  "orders.CustomerOrderSummary": {
+   "properties": {
+    "customer_id": {
+     "type": "string",
+     "title": "Customer Id",
+     "description": "Customer id"
+    },
+    "order_count": {
+     "type": "integer",
+     "title": "Order Count",
+     "description": "All orders, any status"
+    },
+    "counted_order_count": {
+     "type": "integer",
+     "title": "Counted Order Count",
+     "description": "Orders that count as revenue (not cancelled or refunded)"
+    },
+    "totals": {
+     "items": {
+      "$ref": "#/schemas/orders.CurrencyTotal"
+     },
+     "type": "array",
+     "title": "Totals",
+     "description": "Revenue per currency, counted orders only"
+    },
+    "open_orders": {
+     "type": "integer",
+     "title": "Open Orders",
+     "description": "Orders placed or paid but not yet shipped"
+    },
+    "first_order_date": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "First Order Date",
+     "description": "Date of the first order, null if none"
+    },
+    "last_order_date": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Last Order Date",
+     "description": "Date of the most recent order, null if none"
+    }
+   },
+   "type": "object",
+   "required": [
+    "customer_id",
+    "order_count",
+    "counted_order_count",
+    "totals",
+    "open_orders",
+    "first_order_date",
+    "last_order_date"
+   ],
+   "title": "CustomerOrderSummary"
+  },
+  "orders.HTTPValidationError": {
+   "properties": {
+    "detail": {
+     "items": {
+      "$ref": "#/schemas/orders.ValidationError"
+     },
+     "type": "array",
+     "title": "Detail"
+    }
+   },
+   "type": "object",
+   "title": "HTTPValidationError"
+  },
+  "orders.Order": {
+   "properties": {
+    "order_id": {
+     "type": "string",
+     "title": "Order Id",
+     "description": "Order id, e.g. ORD-10001"
+    },
+    "customer_id": {
+     "type": "string",
+     "title": "Customer Id",
+     "description": "Customer id (resolve names via the customers service)"
+    },
+    "created_at": {
+     "type": "string",
+     "title": "Created At",
+     "description": "Order date (YYYY-MM-DD)"
+    },
+    "status": {
+     "type": "string",
+     "enum": [
+      "placed",
+      "paid",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "refunded"
+     ],
+     "title": "Status",
+     "description": "placed, paid, shipped, delivered, cancelled or refunded"
+    },
+    "currency": {
+     "type": "string",
+     "title": "Currency",
+     "description": "ISO currency of the order"
+    },
+    "total": {
+     "type": "number",
+     "title": "Total",
+     "description": "Sum of line amounts, in the order currency"
+    },
+    "lines": {
+     "items": {
+      "$ref": "#/schemas/orders.OrderLine"
+     },
+     "type": "array",
+     "title": "Lines",
+     "description": "The order lines"
+    }
+   },
+   "type": "object",
+   "required": [
+    "order_id",
+    "customer_id",
+    "created_at",
+    "status",
+    "currency",
+    "total",
+    "lines"
+   ],
+   "title": "Order"
+  },
+  "orders.OrderLine": {
+   "properties": {
+    "sku": {
+     "type": "string",
+     "title": "Sku",
+     "description": "Product SKU"
+    },
+    "description": {
+     "type": "string",
+     "title": "Description",
+     "description": "Product name"
+    },
+    "quantity": {
+     "type": "integer",
+     "title": "Quantity",
+     "description": "Units ordered"
+    },
+    "unit_price": {
+     "type": "number",
+     "title": "Unit Price",
+     "description": "Price per unit in the order currency"
+    },
+    "amount": {
+     "type": "number",
+     "title": "Amount",
+     "description": "quantity x unit_price"
+    }
+   },
+   "type": "object",
+   "required": [
+    "sku",
+    "description",
+    "quantity",
+    "unit_price",
+    "amount"
+   ],
+   "title": "OrderLine"
+  },
+  "orders.OrderSummary": {
+   "properties": {
+    "order_id": {
+     "type": "string",
+     "title": "Order Id",
+     "description": "Order id"
+    },
+    "created_at": {
+     "type": "string",
+     "title": "Created At",
+     "description": "Order date (YYYY-MM-DD)"
+    },
+    "status": {
+     "type": "string",
+     "enum": [
+      "placed",
+      "paid",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "refunded"
+     ],
+     "title": "Status",
+     "description": "Order status"
+    },
+    "currency": {
+     "type": "string",
+     "title": "Currency",
+     "description": "ISO currency of the order"
+    },
+    "total": {
+     "type": "number",
+     "title": "Total",
+     "description": "Order total in its currency"
+    }
+   },
+   "type": "object",
+   "required": [
+    "order_id",
+    "created_at",
+    "status",
+    "currency",
+    "total"
+   ],
+   "title": "OrderSummary"
+  },
+  "orders.TopCustomer": {
+   "properties": {
+    "rank": {
+     "type": "integer",
+     "title": "Rank",
+     "description": "1 = highest spend"
+    },
+    "customer_id": {
+     "type": "string",
+     "title": "Customer Id",
+     "description": "Customer id (names come from the customers service)"
+    },
+    "currency": {
+     "type": "string",
+     "title": "Currency",
+     "description": "Currency of the total"
+    },
+    "total": {
+     "type": "number",
+     "title": "Total",
+     "description": "Revenue from counted orders in the window"
+    },
+    "order_count": {
+     "type": "integer",
+     "title": "Order Count",
+     "description": "Counted orders in the window"
+    }
+   },
+   "type": "object",
+   "required": [
+    "rank",
+    "customer_id",
+    "currency",
+    "total",
+    "order_count"
+   ],
+   "title": "TopCustomer"
+  },
+  "orders.ValidationError": {
+   "properties": {
+    "loc": {
+     "items": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       }
+      ]
+     },
+     "type": "array",
+     "title": "Location"
+    },
+    "msg": {
+     "type": "string",
+     "title": "Message"
+    },
+    "type": {
+     "type": "string",
+     "title": "Error Type"
+    }
+   },
+   "type": "object",
+   "required": [
+    "loc",
+    "msg",
+    "type"
+   ],
+   "title": "ValidationError"
+  }
+ }
+}

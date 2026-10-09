@@ -1,0 +1,36 @@
+# Routing bank: planner only, one model call per question.
+#
+#   python scripts/eval_coverage.py
+#   python scripts/langfuse_eval.py run --bank routing
+#
+# `expect` lists acceptable skills -- routing is correct if the planner picks
+# any one of them. `expect: [UNANSWERABLE]` means it should decline. Mix
+# phrasings the manifests' `answers` anticipate with ones they deliberately do
+# not: the second kind is what tests entity x operation routing.
+
+- q: "Tell me about customer CUST-1004"
+  expect: [customer_profile]
+- q: "who is Globex"
+  expect: [customer_profile]
+- q: "Is there more than one customer called Stark?"
+  expect: [customer_profile]
+- q: "Which of our clients are based in Europe?"
+  expect: [customer_profile]
+- q: "how many smb accounts are still active"
+  expect: [customer_profile]
+- q: "What is in order ORD-10005?"
+  expect: [order_analysis]
+- q: "Who are our top 3 customers by spend in USD?"
+  expect: [order_analysis]
+- q: "which companies bring in the most money"
+  expect: [order_analysis]
+- q: "how much has Globex bought from us so far"
+  expect: [order_analysis]
+- q: "has CUST-1010 got anything still waiting to ship"
+  expect: [order_analysis]
+- q: "how did Acme's purchases trend over the last year"
+  expect: [order_analysis]
+- q: "What is the weather in Paris?"
+  expect: [UNANSWERABLE]
+- q: "Cancel order ORD-10005"
+  expect: [UNANSWERABLE]

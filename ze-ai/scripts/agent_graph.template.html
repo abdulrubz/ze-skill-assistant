@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ask AI: agents, skills and tools</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Primary */
+  --color-primary-500:#2B3D72; --color-primary-400:#3E57A3; --color-primary-300:#7A8FCD;
+  --color-primary-200:#B5C1E3; --color-primary-100:#F0F3F9;
+  /* Secondary (signal only) */
+  --color-secondary-500:#F46E57; --color-secondary-400:#FACEC6;
+  /* Accent */
+  --color-accent-blue:#7795F8; --color-accent-light-blue:#ECF0FE; --color-accent-green:#DEF7EB;
+  /* Structural */
+  --color-structural-blue-1:#F5F7FF; --color-structural-orange:#FEF3EC; --color-structural-white:#FEFEFE;
+  /* Neutral */
+  --color-grey-500:#292625; --color-grey-400:#56504E; --color-grey-300:#817774;
+  --color-grey-200:#A8A19F; --color-grey-100:#F5F5F4;
+  --color-success:#2DB477; --color-white:#FFFFFF;
+  /* Type */
+  --font-family:'DM Sans',sans-serif;
+  /* Spacing */
+  --space-xs:4px; --space-sm:8px; --space-sm-plus:12px; --space-md:16px; --space-md-plus:20px;
+  --space-lg:24px; --space-xl:32px; --space-2xl:40px; --space-3xl:48px; --space-4xl:64px; --space-5xl:80px;
+  /* Derived */
+  --rule:color-mix(in srgb,var(--color-primary-200) 55%,var(--color-white));
+  --page-pad:48px;
+  --max-width:1400px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-family);font-weight:300;color:var(--color-grey-500);background:var(--color-structural-blue-1);line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+
+/* ── Header + hero ── */
+.hd{position:sticky;top:0;z-index:50;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--page-pad);background:var(--color-primary-500);border-bottom:1px solid rgba(255,255,255,.12)}
+.hd-brand{display:flex;align-items:center;gap:14px}
+.hd-name{font-size:13px;font-weight:600;letter-spacing:.03em;color:var(--color-white)}
+.hd-sep{width:1px;height:14px;background:rgba(255,255,255,.25)}
+.hd-sub{font-size:12px;font-weight:300;color:var(--color-primary-200)}
+.hd-tag{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-secondary-500);border:1px solid rgba(244,110,87,.5);padding:3px 10px;background:rgba(244,110,87,.12)}
+.hero{background:var(--color-primary-500);color:var(--color-white);padding:var(--space-2xl) var(--page-pad) var(--space-3xl)}
+.hero-in{max-width:var(--max-width);margin:0 auto}
+.hero-label{font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;opacity:.65;margin-bottom:var(--space-sm)}
+.hero-title{font-size:36px;font-weight:300;line-height:1.2;margin-bottom:var(--space-sm-plus)}
+.hero-sub{font-size:14px;font-weight:300;opacity:.85;line-height:1.7;max-width:720px}
+.hero-sub b{font-weight:500;color:var(--color-secondary-500);opacity:1}
+
+.wrap{max-width:var(--max-width);margin:0 auto;padding:0 var(--page-pad) var(--space-5xl)}
+
+/* ── KPI row ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-sm-plus);margin:calc(var(--space-xl) * -1) 0 var(--space-xl);position:relative;z-index:2}
+.kpi{background:var(--color-white);border:1px solid var(--rule);padding:var(--space-md-plus) 18px 18px;position:relative;overflow:hidden;box-shadow:0 2px 10px rgba(43,61,114,.08)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--color-primary-200)}
+.kpi--hot::after{background:var(--color-secondary-500)}
+.kpi-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-grey-300)}
+.kpi-value{font-size:32px;font-weight:500;line-height:1.15;color:var(--color-primary-500);margin:4px 0 2px}
+.kpi-note{font-size:12px;font-weight:300;color:var(--color-grey-300);line-height:1.4}
+
+/* ── Toolbar ── */
+.bar{display:flex;align-items:center;gap:var(--space-md);flex-wrap:wrap;margin-bottom:var(--space-md)}
+.search{position:relative;flex:1 1 280px;max-width:420px}
+.search input{width:100%;height:40px;padding:0 14px 0 38px;font-size:14px;font-weight:400;color:var(--color-grey-500);background:var(--color-white);border:1px solid var(--rule);outline:none;transition:border-color .15s,box-shadow .15s}
+.search input::placeholder{color:var(--color-grey-200);font-weight:300}
+.search input:focus{border-color:var(--color-primary-300);box-shadow:0 0 0 3px var(--color-accent-light-blue)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--color-grey-200)}
+.seg{display:inline-flex;border:1px solid var(--rule);background:var(--color-white)}
+.seg button{height:38px;padding:0 var(--space-md);font-size:12px;font-weight:500;letter-spacing:.02em;color:var(--color-grey-400);background:transparent;border:0;cursor:pointer;transition:background .15s,color .15s}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--color-primary-500);color:var(--color-white)}
+.seg button:not([aria-pressed="true"]):hover{background:var(--color-primary-100)}
+.reset{height:38px;padding:0 var(--space-md);font-size:12px;font-weight:500;color:var(--color-primary-400);background:transparent;border:1px solid var(--rule);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .15s}
+.reset.show{opacity:1;pointer-events:auto}
+.reset:hover{background:var(--color-primary-100)}
+
+.legend{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-lg);margin-bottom:var(--space-md);font-size:12px;font-weight:400;color:var(--color-grey-400)}
+.lg{display:inline-flex;align-items:center;gap:var(--space-sm)}
+.lg svg{flex-shrink:0}
+
+/* ── Stage ── */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--space-md)}
+.canvas{background:var(--color-white);border:1px solid var(--rule);box-shadow:0 1px 6px rgba(43,61,114,.05);overflow-x:auto;position:relative}
+.canvas svg{display:block;width:100%;min-width:900px;height:auto}
+.panel{position:sticky;top:68px;align-self:start;background:var(--color-white);border:1px solid var(--rule);box-shadow:0 1px 6px rgba(43,61,114,.05);max-height:calc(100vh - 88px);overflow:auto}
+.panel-bar{height:3px;background:var(--color-primary-300)}
+.panel-bar.write{background:var(--color-secondary-500)}
+.panel-in{padding:var(--space-lg)}
+.ey{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--color-secondary-500);margin-bottom:6px}
+.ey--blue{color:var(--color-primary-400)}
+.p-title{font-size:18px;font-weight:600;line-height:1.3;color:var(--color-primary-500);margin-bottom:var(--space-sm)}
+.p-sum{font-size:14px;font-weight:300;color:var(--color-grey-400);line-height:1.7}
+.p-sec{margin-top:var(--space-lg)}
+.p-lab{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-grey-300);margin-bottom:var(--space-sm)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:400;color:var(--color-grey-400);background:var(--color-white);border:1px solid var(--rule);border-radius:20px;padding:3px 11px;cursor:default}
+button.chip{cursor:pointer;transition:background .15s,border-color .15s}
+button.chip:hover{background:var(--color-primary-100);border-color:var(--color-primary-300)}
+.chip--write{background:var(--color-structural-orange);border-color:var(--color-secondary-400)}
+.chip--static{background:var(--color-primary-100);border-color:transparent;color:var(--color-primary-500)}
+.p-list{list-style:none;display:grid;gap:var(--space-sm)}
+.p-list li{font-size:13px;font-weight:300;color:var(--color-grey-400);line-height:1.5;padding-left:14px;position:relative}
+.p-list li::before{content:'';position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--color-primary-200)}
+.p-list.cannot li::before{background:var(--color-secondary-400)}
+.note{margin-top:var(--space-lg);padding:var(--space-sm-plus) var(--space-md);font-size:13px;font-weight:300;line-height:1.6;color:var(--color-grey-400);background:var(--color-structural-orange);border-left:3px solid var(--color-secondary-500)}
+.note b{font-weight:600;color:var(--color-grey-500)}
+.hint{font-size:14px;font-weight:300;color:var(--color-grey-400);line-height:1.7}
+.hint li{margin-top:var(--space-sm)}
+
+/* ── Graph ── */
+.col-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;fill:var(--color-primary-400)}
+.col-rule{stroke:var(--rule);stroke-width:1}
+.grp-label{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;fill:var(--color-grey-300)}
+.edge{fill:none;transition:opacity .18s,stroke-width .18s;stroke-linecap:round}
+.edge.as{stroke:var(--color-primary-300);stroke-width:1.1;opacity:.34}
+.edge.st{stroke:var(--color-accent-blue);stroke-width:1;opacity:.34}
+.edge.pr{stroke:var(--color-secondary-500);stroke-width:1.1;stroke-dasharray:4 4;opacity:.55}
+.edge.on{opacity:.95}
+.edge.as.on,.edge.st.on{stroke-width:2}
+.edge.pr.on{stroke-width:1.8}
+.edge.dim{opacity:.05}
+.node{cursor:pointer;transition:opacity .18s}
+.node.dim{opacity:.16}
+.node rect.bg{transition:fill .15s,stroke .15s}
+.node text{font-family:var(--font-family);pointer-events:none}
+.a-bg{fill:var(--color-primary-500);stroke:var(--color-primary-500)}
+.node.a:hover .a-bg,.node.a.sel .a-bg{fill:var(--color-primary-400)}
+.a-name{font-size:13px;font-weight:600;fill:var(--color-white)}
+.a-sub{font-size:10.5px;font-weight:300;fill:var(--color-primary-200)}
+.s-bg{fill:var(--color-white);stroke:var(--color-primary-300);stroke-width:1}
+.node.s:hover .s-bg,.node.s.sel .s-bg{fill:var(--color-primary-100);stroke:var(--color-primary-400)}
+.node.s.out .s-bg{fill:var(--color-accent-light-blue);stroke-dasharray:3 3}
+.s-name{font-size:12px;font-weight:500;fill:var(--color-primary-500)}
+.s-count{font-size:10.5px;font-weight:500;fill:var(--color-grey-300)}
+.s-mut{fill:var(--color-secondary-500)}
+.t-bg{fill:var(--color-white);stroke:var(--color-primary-200);stroke-width:1}
+.node.t:hover .t-bg,.node.t.sel .t-bg{fill:var(--color-accent-light-blue);stroke:var(--color-accent-blue)}
+.node.t.w .t-bg{fill:var(--color-structural-orange);stroke:var(--color-secondary-400)}
+.node.t.w:hover .t-bg,.node.t.w.sel .t-bg{fill:var(--color-secondary-400);stroke:var(--color-secondary-500)}
+.t-name{font-size:11px;font-weight:400;fill:var(--color-grey-400)}
+.pip{fill:var(--color-primary-100);stroke:var(--color-primary-200);stroke-width:.8}
+.pip.f{fill:var(--color-primary-400);stroke:var(--color-primary-400)}
+.node.hit .a-bg,.node.hit .s-bg,.node.hit .t-bg{stroke:var(--color-secondary-500);stroke-width:2}
+.node.sel .a-bg,.node.sel .s-bg,.node.sel .t-bg{stroke:var(--color-secondary-500);stroke-width:2}
+.node:focus{outline:none}
+.node:focus-visible .a-bg,.node:focus-visible .s-bg,.node:focus-visible .t-bg{stroke:var(--color-primary-500);stroke-width:2}
+.gate-line{stroke:var(--color-secondary-500);stroke-width:1;stroke-dasharray:2 3}
+.gate-label{font-size:9.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;fill:var(--color-secondary-500)}
+@media(prefers-reduced-motion:no-preference){
+  .node{animation:rise .5s backwards}
+  @keyframes rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+}
+
+/* ── Tables ── */
+.tables{display:none;gap:var(--space-xl);grid-template-columns:1fr}
+.tables.show{display:grid}
+.tcap{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-grey-300);margin-bottom:var(--space-sm)}
+.dt{width:100%;border-collapse:collapse;border:1px solid var(--rule);background:var(--color-white);box-shadow:0 1px 6px rgba(43,61,114,.05)}
+.dt th{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-grey-400);padding:12px 14px;text-align:left;border-bottom:1px solid var(--rule);background:var(--color-primary-100);white-space:nowrap}
+.dt td{padding:12px 14px;border-bottom:1px solid var(--rule);vertical-align:top;font-size:12px;font-weight:400;color:var(--color-grey-400)}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--color-structural-blue-1)}
+.dt td.nm{font-weight:600;color:var(--color-primary-500);white-space:nowrap}
+.dt .chips{gap:4px}.dt .chip{font-size:11px;padding:1px 8px}
+
+.foot{margin-top:var(--space-xl);font-size:12px;font-weight:300;font-style:italic;color:var(--color-grey-300);padding-left:12px;border-left:2px solid var(--rule)}
+
+@media(max-width:1100px){
+  :root{--page-pad:20px}
+  .stage{grid-template-columns:1fr}
+  .panel{position:static;max-height:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .hero-title{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-brand"><span class="hd-name">ZEMOSO</span><span class="hd-sep"></span><span class="hd-sub">Ask AI</span></div>
+  <span class="hd-tag">Capability map</span>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-label">Zemoso · Ask AI</div>
+    <h1 class="hero-title">How a question finds its data</h1>
+    <p class="hero-sub">Each agent is allowed a set of skills, and each skill can only call the tools it has been granted. <b>Tools are read-only</b>, generated from the services' OpenAPI specs, and every call carries the asking user's own token.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <div class="bar">
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search a question, skill, tool or entity, e.g. refund" autocomplete="off" aria-label="Search the graph">
+    </label>
+    <div class="seg" role="group" aria-label="View">
+      <button id="v-graph" aria-pressed="true">Graph</button>
+      <button id="v-table" aria-pressed="false">Table</button>
+    </div>
+    <button class="reset" id="reset">Clear selection</button>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="stage" id="stage">
+    <div class="canvas" id="canvas"><svg id="svg" role="img" aria-label="Graph of agents, the skills they can use, and the tools each skill can call"></svg></div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <div class="tables" id="tables"></div>
+
+  <p class="foot" id="foot"></p>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, kids = []) => {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  for (const c of [].concat(kids)) n.append(c);
+  return n;
+};
+const h = (tag, attrs = {}, kids = []) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else n.setAttribute(k, v);
+  }
+  for (const c of [].concat(kids)) n.append(c);
+  return n;
+};
+const nice = (id) => { const s = id.replace(/_/g, ' '); return s[0].toUpperCase() + s.slice(1); };
+const COST = { low: 1, medium: 2, high: 3 };
+
+/* ── data model ─────────────────────────────────────────── */
+const agents = DATA.agents, skills = DATA.skills, tools = DATA.tools;
+const skillById = Object.fromEntries(skills.map(s => [s.id, s]));
+const toolById = Object.fromEntries(tools.map(t => [t.name, t]));
+const agentById = Object.fromEntries(agents.map(a => [a.id, a]));
+const isWrite = (t) => t.access !== 'read';
+const writeTools = tools.filter(isWrite);
+const proposer = skills.find(s => s.mutating);                  // the skill that proposes writes
+const grants = (s) => [...(s.tool_grants || [])];
+const skillTools = (s) => s === proposer ? [...grants(s), ...writeTools.map(t => t.name)] : grants(s);
+const agentsOf = (sid) => agents.filter(a => a.skills.includes(sid));
+const skillsOf = (tname) => skills.filter(s => skillTools(s).includes(tname));
+
+/* ── ordering (barycentre, so edges cross as little as they can) ── */
+const preferred = ['general', 'support_agent', 'collections_analyst', 'ops_auditor', 'revenue_analyst', 'pricing_strategist'];
+agents.sort((a, b) => (preferred.indexOf(a.id) + 99) % 99 - (preferred.indexOf(b.id) + 99) % 99);
+const aIdx = Object.fromEntries(agents.map((a, i) => [a.id, i]));
+const mean = (xs) => xs.length ? xs.reduce((p, c) => p + c, 0) / xs.length : 1e9;
+const domain = skills.filter(s => s.kind !== 'output').sort((a, b) =>
+  mean(agentsOf(a.id).map(x => aIdx[x.id])) - mean(agentsOf(b.id).map(x => aIdx[x.id])) || a.id.localeCompare(b.id));
+const outputs = skills.filter(s => s.kind === 'output').sort((a, b) => a.id.localeCompare(b.id));
+const skillOrder = [...domain, ...outputs];
+const sIdx = Object.fromEntries(skillOrder.map((s, i) => [s.id, i]));
+const bary = (t) => mean(skillsOf(t.name).map(s => sIdx[s.id]));
+const groups = {};
+tools.forEach(t => (groups[t.group] ||= []).push(t));
+const groupList = Object.entries(groups).map(([name, ts]) => ({ name, tools: ts.sort((a, b) => bary(a) - bary(b) || a.name.localeCompare(b.name)) }))
+  .sort((a, b) => mean(a.tools.map(bary)) - mean(b.tools.map(bary)) || a.name.localeCompare(b.name));
+// write tools sit in their own gated block at the bottom, whatever their API group is
+const gated = writeTools.slice().sort((a, b) => a.name.localeCompare(b.name));
+groupList.forEach(g => g.tools = g.tools.filter(t => !isWrite(t)));
+const shownGroups = groupList.filter(g => g.tools.length);
+
+/* ── layout ─────────────────────────────────────────────── */
+const W = 1000, TOP = 56;
+const AX = 0, AW = 196, AH = 62, SX = 338, SW = 246, SH = 30, TX = 726, TW = 274, TH = 21, ROW = 25;
+let y = TOP;
+const pos = { a: {}, s: {}, t: {} };
+const groupLabels = [];
+shownGroups.forEach(g => {
+  groupLabels.push({ y: y + 10, text: g.name.replace(/_/g, ' ') });
+  y += 20;
+  g.tools.forEach(t => { pos.t[t.name] = { x: TX, y, w: TW, h: TH }; y += ROW; });
+  y += 12;
+});
+const gateY = y + 4;
+y += 30;
+gated.forEach(t => { pos.t[t.name] = { x: TX, y, w: TW, h: TH }; y += ROW; });
+const H = y + 24;
+
+const span = H - TOP - 24;
+agents.forEach((a, i) => { const c = TOP + (i + .5) * span / agents.length; pos.a[a.id] = { x: AX, y: c - AH / 2, w: AW, h: AH }; });
+// Skills are spread over the full height; the output block gets a gap and its own label.
+{
+  const n = skillOrder.length, gap = 30, avail = span - gap - 8;
+  const p = avail / n;
+  skillOrder.forEach((s, i) => { pos.s[s.id] = { x: SX, y: TOP + 6 + i * p + (i >= domain.length ? gap : 0), w: SW, h: SH }; });
+}
+
+/* ── edges ──────────────────────────────────────────────── */
+const edges = [];
+agents.forEach(a => {
+  const targets = a.skills.filter(s => skillById[s]).sort((p, q) => pos.s[p].y - pos.s[q].y);
+  targets.forEach((sid, i) => {
+    const p = pos.a[a.id];
+    const y1 = p.y + 12 + (i + .5) * (p.h - 24) / targets.length;
+    edges.push({ k: 'as', a: a.id, s: sid, x1: p.x + p.w, y1, x2: pos.s[sid].x, y2: pos.s[sid].y + SH / 2 });
+  });
+});
+skills.forEach(s => {
+  skillTools(s).filter(t => toolById[t]).forEach(t => {
+    const sp = pos.s[s.id], tp = pos.t[t];
+    edges.push({ k: isWrite(toolById[t]) ? 'pr' : 'st', s: s.id, t, x1: sp.x + sp.w, y1: sp.y + SH / 2, x2: tp.x, y2: tp.y + TH / 2 });
+  });
+});
+const curve = (e) => { const m = (e.x1 + e.x2) / 2; return `M${e.x1},${e.y1} C${m},${e.y1} ${m},${e.y2} ${e.x2},${e.y2}`; };
+
+/* ── draw ───────────────────────────────────────────────── */
+const svg = $('svg');
+svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+const gEdges = el('g'), gNodes = el('g'), gBack = el('g');
+svg.append(gBack, gEdges, gNodes);
+
+[['AGENTS', AX], ['SKILLS', SX], ['TOOLS', TX]].forEach(([t, x]) => {
+  gBack.append(el('text', { x, y: 24, class: 'col-label' }, t));
+  gBack.append(el('line', { x1: x, x2: x + (x === AX ? AW : x === SX ? SW : TW), y1: 34, y2: 34, class: 'col-rule' }));
+});
+groupLabels.forEach(g => gBack.append(el('text', { x: TX, y: g.y, class: 'grp-label' }, g.text)));
+gBack.append(el('text', { x: SX, y: pos.s[outputs[0].id].y - 12, class: 'grp-label' }, 'Output skills: no tools, they write the answer'));
+// approval gate
+gBack.append(el('line', { x1: TX - 56, x2: TX + TW, y1: gateY, y2: gateY, class: 'gate-line' }));
+gBack.append(el('text', { x: TX, y: gateY + 17, class: 'gate-label' }, 'Human approval gate: proposed, never run'));
+
+const edgeEls = edges.map(e => { const p = el('path', { d: curve(e), class: `edge ${e.k}` }); gEdges.append(p); e.el = p; return p; });
+
+const nodeEls = {};
+const mk = (type, id, p, cls, inner, label) => {
+  const g = el('g', { class: `node ${type} ${cls || ''}`, tabindex: 0, role: 'button', 'aria-label': label, 'data-type': type, 'data-id': id });
+  g.append(el('rect', { class: `bg ${type}-bg`, x: p.x, y: p.y, width: p.w, height: p.h, rx: type === 'a' ? 3 : 2 }));
+  inner.forEach(i => g.append(i));
+  g.style.animationDelay = `${Math.min(p.y / 4000, .6)}s`;
+  gNodes.append(g);
+  nodeEls[type + ':' + id] = g;
+  return g;
+};
+
+agents.forEach(a => {
+  const p = pos.a[a.id];
+  const uniqTools = new Set(a.skills.flatMap(s => skillById[s] ? skillTools(skillById[s]) : []));
+  const sub = `${a.skills.length} skills · ${a.allow_write ? 'can propose writes' : 'read-only'}`;
+  mk('a', a.id, p, '', [
+    el('text', { x: p.x + 14, y: p.y + 26, class: 'a-name' }, a.display_name),
+    el('text', { x: p.x + 14, y: p.y + 44, class: 'a-sub' }, sub),
+  ], `${a.display_name}, agent`);
+  a._tools = uniqTools.size;
+});
+
+skillOrder.forEach(s => {
+  const p = pos.s[s.id];
+  const inner = [
+    el('text', { x: p.x + 14, y: p.y + 19.5, class: 's-name' }, nice(s.id)),
+    el('text', { x: p.x + p.w - 12, y: p.y + 19.5, class: 's-count', 'text-anchor': 'end' }, s.kind === 'output' ? '' : `${skillTools(s).length} tools`),
+  ];
+  if (s.mutating) inner.unshift(el('rect', { x: p.x, y: p.y, width: 3, height: p.h, class: 's-mut' }));
+  mk('s', s.id, p, s.kind === 'output' ? 'out' : '', inner, `${nice(s.id)}, skill`);
+});
+
+const lock = (x, y) => el('path', { d: `M${x},${y + 4.5} v-1.6 a2.3,2.3 0 0 1 4.6,0 v1.6 M${x - 1},${y + 4.5} h6.6 v5 h-6.6 z`, fill: 'none', stroke: 'currentColor', 'stroke-width': 1.1, style: 'color:var(--color-secondary-500)' });
+tools.forEach(t => {
+  const p = pos.t[t.name];
+  const inner = [el('text', { x: p.x + 10, y: p.y + 14.2, class: 't-name' }, t.name)];
+  if (isWrite(t)) inner.push(lock(p.x + p.w - 22, p.y + 4));
+  else for (let i = 0; i < 3; i++) inner.push(el('circle', { cx: p.x + p.w - 36 + i * 9, cy: p.y + TH / 2, r: 2.6, class: 'pip' + (i < COST[t.cost_class] ? ' f' : '') }));
+  mk('t', t.name, p, isWrite(t) ? 'w' : '', inner, `${t.name}, ${isWrite(t) ? 'write ' : ''}tool`);
+});
+
+/* ── focus logic ────────────────────────────────────────── */
+let pinned = null, hover = null;
+const key = (s) => s && `${s.type}:${s.id}`;
+
+function reach(sel) {
+  // which nodes and edges a selection lights up
+  const n = new Set([key(sel)]);
+  const onEdge = new Set();
+  const add = (e) => onEdge.add(e);
+  if (sel.type === 'a') {
+    edges.forEach(e => { if (e.k === 'as' && e.a === sel.id) { add(e); n.add('s:' + e.s); } });
+    edges.forEach(e => { if (e.k !== 'as' && n.has('s:' + e.s)) { add(e); n.add('t:' + e.t); } });
+  } else if (sel.type === 's') {
+    edges.forEach(e => { if (e.k === 'as' && e.s === sel.id) { add(e); n.add('a:' + e.a); } });
+    edges.forEach(e => { if (e.k !== 'as' && e.s === sel.id) { add(e); n.add('t:' + e.t); } });
+  } else {
+    edges.forEach(e => { if (e.k !== 'as' && e.t === sel.id) { add(e); n.add('s:' + e.s); } });
+    edges.forEach(e => { if (e.k === 'as' && n.has('s:' + e.s)) { add(e); n.add('a:' + e.a); } });
+  }
+  return { n, onEdge };
+}
+
+let matchSet = null;                       // search result: set of node keys, or null
+function paint() {
+  const sel = pinned || hover;
+  Object.values(nodeEls).forEach(g => g.classList.remove('dim', 'sel', 'hit'));
+  edges.forEach(e => e.el.classList.remove('on', 'dim'));
+  if (sel) {
+    const { n, onEdge } = reach(sel);
+    Object.entries(nodeEls).forEach(([k, g]) => g.classList.toggle('dim', !n.has(k)));
+    nodeEls[key(sel)].classList.add('sel');
+    edges.forEach(e => e.el.classList.add(onEdge.has(e) ? 'on' : 'dim'));
+  } else if (matchSet) {
+    Object.entries(nodeEls).forEach(([k, g]) => { const hit = matchSet.has(k); g.classList.toggle('dim', !hit); g.classList.toggle('hit', hit); });
+    edges.forEach(e => {
+      const a = e.k === 'as' ? 'a:' + e.a : 's:' + e.s, b = e.k === 'as' ? 's:' + e.s : 't:' + e.t;
+      e.el.classList.add(matchSet.has(a) && matchSet.has(b) ? 'on' : 'dim');
+    });
+  }
+  $('reset').classList.toggle('show', !!(pinned || matchSet));
+  renderPanel(sel);
+}
+
+/* ── side panel ─────────────────────────────────────────── */
+const chip = (label, sel, cls = '') => {
+  const b = h('button', { class: `chip ${cls}`, type: 'button', text: label });
+  b.addEventListener('click', () => { pinned = sel; paint(); });
+  return b;
+};
+const sec = (label, body) => h('div', { class: 'p-sec' }, [h('div', { class: 'p-lab', text: label }), body]);
+const chips = (xs) => h('div', { class: 'chips' }, xs);
+const list = (xs, cls = '') => h('ul', { class: `p-list ${cls}` }, xs.map(x => h('li', { text: x })));
+const stat = (xs) => chips(xs.map(x => h('span', { class: 'chip chip--static', text: x })));
+
+function renderPanel(sel) {
+  const p = $('panel'); p.replaceChildren();
+  let bar = 'panel-bar', body;
+  if (!sel) {
+    const top = tools.map(t => [t, skillsOf(t.name).length]).sort((a, b) => b[1] - a[1])[0];
+    body = h('div', { class: 'panel-in' }, [
+      h('div', { class: 'ey ey--blue', text: 'How to read this' }),
+      h('div', { class: 'p-title', text: 'Hover or click anything' }),
+      h('ul', { class: 'hint p-list' }, [
+        h('li', { text: 'Hover an agent to see the skills it can use and every tool those skills can reach.' }),
+        h('li', { text: 'Click to pin a selection, then jump to anything connected from the panel.' }),
+        h('li', { text: `Search for words from a question, like "refund" or "overdue", to see which skills answer it.` }),
+        h('li', { text: `${top[0].name} is the most shared tool: ${top[1]} skills call it.` }),
+      ]),
+    ]);
+  } else if (sel.type === 'a') {
+    const a = agentById[sel.id];
+    body = h('div', { class: 'panel-in' }, [
+      h('div', { class: 'ey', text: 'Agent' }), h('div', { class: 'p-title', text: a.display_name }), h('p', { class: 'p-sum', text: a.summary }),
+      sec(`Skills · ${a.skills.length}`, chips(a.skills.map(s => chip(nice(s), { type: 's', id: s })))),
+      sec('Reach', stat([`${a._tools} distinct tools`, a.allow_write ? 'can propose write actions' : 'read-only'])),
+      ...(a.allow_write ? [h('div', { class: 'note' }, [h('b', { text: 'Writes need a person. ' }), 'This agent may propose a refund, credit or cancellation, but nothing runs until a human approves it.'])] : []),
+    ]);
+  } else if (sel.type === 's') {
+    const s = skillById[sel.id], by = agentsOf(s.id), tl = skillTools(s);
+    body = h('div', { class: 'panel-in' }, [
+      h('div', { class: 'ey', text: s.kind === 'output' ? 'Output skill' : 'Skill' }), h('div', { class: 'p-title', text: nice(s.id) }),
+      h('p', { class: 'p-sum', text: s.summary || 'Turns the gathered facts into the final answer.' }),
+      ...(s.entities?.length ? [sec('Entities', stat(s.entities))] : []),
+      ...(s.operations?.length ? [sec('Operations', stat(s.operations))] : []),
+      ...(s.answers?.length ? [sec('Answers questions like', list(s.answers.slice(0, 4).map(q => `"${q}"`)))] : []),
+      ...(s.cannot?.length ? [sec('Cannot', list(s.cannot, 'cannot'))] : []),
+      ...(tl.length ? [sec(`Tools · ${tl.length}`, chips(tl.filter(t => toolById[t]).map(t => chip(t, { type: 't', id: t }, isWrite(toolById[t]) ? 'chip--write' : ''))))] : []),
+      sec(`Used by · ${by.length} agents`, chips(by.map(a => chip(a.display_name, { type: 'a', id: a.id })))),
+      ...(s.mutating ? [h('div', { class: 'note' }, [h('b', { text: 'Proposes, never executes. ' }), 'The write tools sit behind a human approval gate.'])] : []),
+    ]);
+  } else {
+    const t = toolById[sel.id], ss = skillsOf(t.name);
+    if (isWrite(t)) bar += ' write';
+    body = h('div', { class: 'panel-in' }, [
+      h('div', { class: 'ey', text: isWrite(t) ? 'Write tool' : 'Tool' }), h('div', { class: 'p-title', text: t.name }),
+      sec('Details', stat([`group: ${t.group.replace(/_/g, ' ')}`, `${t.cost_class} cost`, isWrite(t) ? 'writes' : 'read-only', t.operation_id])),
+      sec(isWrite(t) ? 'Proposed by' : `Granted to · ${ss.length} skills`, chips(ss.map(s => chip(nice(s.id), { type: 's', id: s.id })))),
+      ...(t.needs_confirmation ? [h('div', { class: 'note' }, [h('b', { text: 'Needs confirmation. ' }), 'A person has to approve this action before it runs.'])] : []),
+    ]);
+  }
+  p.append(h('div', { class: bar }), body);
+}
+
+/* ── events ─────────────────────────────────────────────── */
+const parse = (g) => g && { type: g.dataset.type, id: g.dataset.id };
+gNodes.addEventListener('mouseover', e => { const g = e.target.closest('.node'); const s = parse(g); if (key(s) !== key(hover)) { hover = s; if (!pinned) paint(); } });
+gNodes.addEventListener('mouseleave', () => { hover = null; if (!pinned) paint(); });
+gNodes.addEventListener('click', e => { const s = parse(e.target.closest('.node')); pinned = (key(s) === key(pinned)) ? null : s; paint(); });
+gNodes.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const s = parse(e.target.closest('.node')); pinned = (key(s) === key(pinned)) ? null : s; paint(); } });
+$('reset').addEventListener('click', () => { pinned = null; matchSet = null; $('q').value = ''; paint(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('reset').click(); });
+
+function haystack(type, id) {
+  if (type === 'a') { const a = agentById[id]; return [a.id, a.display_name, a.summary, ...a.skills].join(' '); }
+  if (type === 's') { const s = skillById[id]; return [s.id, s.summary, ...(s.answers || []), ...(s.entities || []), ...(s.operations || []), ...(s.provides || [])].join(' '); }
+  const t = toolById[id]; return [t.name, t.group, t.operation_id].join(' ');
+}
+$('q').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase().replace(/_/g, ' ');
+  if (!q) { matchSet = null; paint(); return; }
+  const words = q.split(/\s+/);
+  matchSet = new Set(Object.keys(nodeEls).filter(k => {
+    const [type, ...rest] = k.split(':'); const hay = haystack(type, rest.join(':')).toLowerCase().replace(/_/g, ' ');
+    return words.every(w => hay.includes(w));
+  }));
+  if (!matchSet.size) matchSet = new Set();
+  pinned = null; paint();
+});
+
+/* ── KPIs, legend, tables ───────────────────────────────── */
+const topTool = tools.map(t => [t, skillsOf(t.name).length]).sort((a, b) => b[1] - a[1])[0];
+[
+  ['Agents', agents.length, 'all read-only', ''],
+  ['Skills', skills.length, `${domain.length} domain, ${outputs.length} output`, ''],
+  ['Tools', tools.length, `${tools.length - writeTools.length} read, ${writeTools.length} write`, ''],
+  ['Gated writes', writeTools.length, 'Proposed by one skill, run only after a person approves', 'kpi--hot'],
+].forEach(([l, v, n, c]) => $('kpis').append(h('div', { class: `kpi ${c}` }, [h('div', { class: 'kpi-label', text: l }), h('div', { class: 'kpi-value', text: String(v) }), h('div', { class: 'kpi-note', text: n })])));
+
+const sw = (inner) => { const s = el('svg', { width: 22, height: 14, viewBox: '0 0 22 14' }); inner.forEach(i => s.append(i)); return s; };
+[
+  [sw([el('rect', { x: 1, y: 1, width: 20, height: 12, rx: 2, fill: 'var(--color-primary-500)' })]), 'Agent'],
+  [sw([el('rect', { x: 1, y: 1, width: 20, height: 12, rx: 2, fill: 'var(--color-white)', stroke: 'var(--color-primary-300)' })]), 'Skill'],
+  [sw([el('rect', { x: 1, y: 1, width: 20, height: 12, rx: 2, fill: 'var(--color-accent-light-blue)', stroke: 'var(--color-primary-300)', 'stroke-dasharray': '3 2' })]), 'Output skill'],
+  [sw([el('rect', { x: 1, y: 1, width: 20, height: 12, rx: 2, fill: 'var(--color-white)', stroke: 'var(--color-primary-200)' })]), 'Read tool'],
+  [sw([el('rect', { x: 1, y: 1, width: 20, height: 12, rx: 2, fill: 'var(--color-structural-orange)', stroke: 'var(--color-secondary-400)' }), lock(8, 2)]), 'Write tool (needs approval)'],
+  [sw([el('line', { x1: 1, x2: 21, y1: 7, y2: 7, stroke: 'var(--color-primary-300)', 'stroke-width': 2 })]), 'Agent may use skill'],
+  [sw([el('line', { x1: 1, x2: 21, y1: 7, y2: 7, stroke: 'var(--color-accent-blue)', 'stroke-width': 2 })]), 'Skill granted tool'],
+  [sw([el('line', { x1: 1, x2: 21, y1: 7, y2: 7, stroke: 'var(--color-secondary-500)', 'stroke-width': 2, 'stroke-dasharray': '4 3' })]), 'Proposes only'],
+  [sw([1, 2, 3].map(i => el('circle', { cx: 4 + (i - 1) * 7, cy: 7, r: 2.6, fill: 'var(--color-primary-400)' }))), 'Relative cost per call'],
+].forEach(([icon, label]) => $('legend').append(h('span', { class: 'lg' }, [icon, label])));
+
+function buildTables() {
+  const T = $('tables');
+  const chipSpan = (t, c = '') => h('span', { class: `chip ${c}`, text: t });
+  const sk = h('table', { class: 'dt' }, [
+    h('thead', {}, [h('tr', {}, ['Skill', 'Kind', 'Used by agents', 'Tools'].map(x => h('th', { text: x })))]),
+    h('tbody', {}, skillOrder.map(s => h('tr', {}, [
+      h('td', { class: 'nm', text: nice(s.id) }), h('td', { text: s.kind + (s.mutating ? ', proposes writes' : '') }),
+      h('td', {}, [h('div', { class: 'chips' }, agentsOf(s.id).map(a => chipSpan(a.display_name)))]),
+      h('td', {}, [h('div', { class: 'chips' }, skillTools(s).map(t => chipSpan(t, isWrite(toolById[t]) ? 'chip--write' : '')))]),
+    ]))),
+  ]);
+  const tl = h('table', { class: 'dt' }, [
+    h('thead', {}, [h('tr', {}, ['Tool', 'Group', 'Access', 'Cost', 'Needs confirmation', 'Skills'].map(x => h('th', { text: x })))]),
+    h('tbody', {}, tools.slice().sort((a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name)).map(t => h('tr', {}, [
+      h('td', { class: 'nm', text: t.name }), h('td', { text: t.group.replace(/_/g, ' ') }), h('td', { text: t.access }), h('td', { text: t.cost_class }),
+      h('td', { text: t.needs_confirmation ? 'yes' : 'no' }),
+      h('td', {}, [h('div', { class: 'chips' }, skillsOf(t.name).map(s => chipSpan(nice(s.id))))]),
+    ]))),
+  ]);
+  T.append(h('div', {}, [h('div', { class: 'tcap', text: 'Skills' }), sk]), h('div', {}, [h('div', { class: 'tcap', text: 'Tools' }), tl]));
+}
+buildTables();
+
+const setView = (v) => {
+  const g = v === 'graph';
+  $('v-graph').setAttribute('aria-pressed', g); $('v-table').setAttribute('aria-pressed', !g);
+  $('stage').style.display = g ? '' : 'none'; $('legend').style.display = g ? '' : 'none';
+  $('tables').classList.toggle('show', !g);
+};
+$('v-graph').addEventListener('click', () => setView('graph'));
+$('v-table').addEventListener('click', () => setView('table'));
+
+$('foot').textContent = `Read from the live API (${DATA.source}) on ${DATA.generated}. Edges are the manifests' grants: an agent's skill list and each skill's tool_grants. Write tools carry no grant; the skill that proposes them is the only way to reach them.`;
+paint();
+})();
+</script>
+</body>
+</html>

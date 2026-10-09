@@ -1,0 +1,322 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "customers",
+    "description": "Customer master data: identity, segment, region and credit terms.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/customers": {
+      "get": {
+        "summary": "List customers, optionally filtered",
+        "description": "Customers matching every filter given, ordered by customer id. Use `q` to\nfind a customer by (part of) its name.\n\n**Returns:** a list of customers with id, name, segment, region, currency,\nbilling email, signup date, credit limit and whether they are active.",
+        "operationId": "listCustomers",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive substring of the customer name",
+              "title": "Q"
+            },
+            "description": "Case-insensitive substring of the customer name"
+          },
+          {
+            "name": "segment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "enterprise",
+                    "mid_market",
+                    "smb"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this segment",
+              "title": "Segment"
+            },
+            "description": "Only this segment"
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "NA",
+                    "EU",
+                    "APAC"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this region",
+              "title": "Region"
+            },
+            "description": "Only this region"
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only active (true) or churned (false) customers",
+              "title": "Active"
+            },
+            "description": "Only active (true) or churned (false) customers"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum customers to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum customers to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Customer"
+                  },
+                  "title": "Response Listcustomers"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}": {
+      "get": {
+        "summary": "One customer by id",
+        "description": "A single customer.\n\n**Returns:** the customer's id, name, segment, region, currency, billing\nemail, signup date, credit limit and active flag. 404 if no such customer.",
+        "operationId": "getCustomer",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Customer id, e.g. CUST-1001",
+              "title": "Customer Id"
+            },
+            "description": "Customer id, e.g. CUST-1001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Customer": {
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "title": "Customer Id",
+            "description": "Customer id, e.g. CUST-1001"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Legal company name"
+          },
+          "segment": {
+            "type": "string",
+            "enum": [
+              "enterprise",
+              "mid_market",
+              "smb"
+            ],
+            "title": "Segment",
+            "description": "Sales segment: enterprise, mid_market or smb"
+          },
+          "region": {
+            "type": "string",
+            "enum": [
+              "NA",
+              "EU",
+              "APAC"
+            ],
+            "title": "Region",
+            "description": "Sales region: NA, EU or APAC"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "ISO currency the customer is billed in"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "Billing contact email"
+          },
+          "signup_date": {
+            "type": "string",
+            "title": "Signup Date",
+            "description": "Date the customer signed up (YYYY-MM-DD)"
+          },
+          "credit_limit": {
+            "type": "number",
+            "title": "Credit Limit",
+            "description": "Credit limit in the customer's currency"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "description": "False once the customer has churned"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_id",
+          "name",
+          "segment",
+          "region",
+          "currency",
+          "email",
+          "signup_date",
+          "credit_limit",
+          "active"
+        ],
+        "title": "Customer"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "The end user's JWT, forwarded unchanged by ze-ai",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

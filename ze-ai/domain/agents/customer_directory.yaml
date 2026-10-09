@@ -1,0 +1,13 @@
+# A deliberately narrow agent: customer master data only. Shows agent scoping
+# (no order tools reachable) and the refusal that points to another agent.
+id: customer_directory
+display_name: Customer Directory
+summary: Looks up customers and their profile details only.
+scope:
+  tool_deny: []
+skills:
+  - customer_profile
+  - prose_synthesis
+  - table_composition
+max_retries: 1
+prompt_suffix: customer_directory.md

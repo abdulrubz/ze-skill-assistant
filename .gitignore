@@ -1,0 +1,19 @@
+# Local tooling and editor state
+.claude/
+.DS_Store
+
+# Secrets: real keys live only in .env files, which are never committed.
+# .env.example (placeholders only) is the one exception.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+.venv/
+.venv-*/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/

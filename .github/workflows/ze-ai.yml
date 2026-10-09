@@ -1,0 +1,22 @@
+# ze-ai: offline checks on every push and PR that touches it. No gateway,
+# services or Langfuse needed.
+name: ze-ai
+on:
+  push:
+    branches: [main]
+    paths: ["ze-ai/**", ".github/workflows/ze-ai.yml"]
+  pull_request:
+    paths: ["ze-ai/**", ".github/workflows/ze-ai.yml"]
+defaults:
+  run:
+    working-directory: ze-ai
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.12 && uv pip install -e ".[dev]"
+      # The spec snapshot, the generated tools and tools.yaml must agree.
+      - run: .venv/bin/python scripts/tool_spec.py check
+      - run: .venv/bin/pytest -q

@@ -1,0 +1,40 @@
+id: order_analysis
+kind: domain
+summary: What customers ordered and spent -- single orders, order history, totals per customer, and spend rankings.
+answers:
+  - "what is in order ORD-10005"
+  - "what has CUST-1004 ordered"
+  - "how much has Globex spent with us"
+  - "who are our top 5 customers by spend"
+  - "which customers spent the most in EUR"
+  - "show me the open orders for CUST-1010"
+  - "how many orders has this customer placed"
+  - "when was this customer's last order"
+  - "which orders were refunded last quarter"
+  - "rank customers by revenue this year"
+  - "why is this order total so high"
+  - "compare spend between Acme and Globex"
+entities: [order, revenue, customer]
+operations: [lookup, explain, list, aggregate, rank, compare, trend]
+intents: [order_detail, order_history, customer_spend, top_customers]
+requires:
+  - {slot: customer_id, optional: true}
+  - {slot: order_id, optional: true}
+  - {slot: currency, optional: true}
+  - {slot: time_window, optional: true}
+provides: [order_history, customer_spend, top_customers]
+cannot:
+  - "totals blended across currencies -- there is no FX rate in this system; report each currency separately"
+  - "profile details beyond a customer's name (segment, credit limit, contact) -- that is customer profile"
+caveats:
+  - "revenue counts only orders that were not cancelled or refunded"
+tool_grants:
+  - list_orders
+  - get_order
+  - get_customer_order_summary
+  - rank_customers_by_spend
+  - get_customer
+  - find_customers
+cost_class: medium
+max_tool_steps: 8
+prompt: order_analysis.md

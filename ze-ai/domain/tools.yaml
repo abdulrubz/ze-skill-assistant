@@ -1,0 +1,88 @@
+# The tools agents can use. Human-owned: every line here is a decision.
+#
+#   specs/<service>.openapi.json   the services' specs, synced from the spec repo
+#                                  (scripts/tool_spec.py sync). Never edited here.
+#   generated/<service>.tools.json GENERATED from them: every operation, what it
+#                                  takes and returns, what a model sees of it.
+#   domain/tools.yaml (this)       WHICH operations agents may use, under what
+#                                  name, described how.
+#
+# This file is the complete list. Skills can grant only tools named here
+# (checked at boot), and nothing else in any spec can be called. Reads only:
+# the drift check rejects a write. `scripts/tool_spec.py list` shows every
+# operation to choose from; `check` (CI) fails with one line per tool that no
+# longer fits its spec.
+#
+# Per tool (keyed by the tool name skills grant):
+#   operation    `<service>.<operationId>`. The service is the spec repo folder
+#                name; its base URL is SERVICE_<NAME>_URL. The operation must
+#                be documented for agents (a **Returns:** section in the spec).
+#   description  what the MODEL reads to choose and use the tool. Arguments
+#                are the spec's, with the spec's descriptions; a "Returns:"
+#                section is appended from the spec's field descriptions.
+#   group, cost_class  how the tool is grouped and budgeted
+#   output       OPTIONAL, for token cost only: which response fields reach
+#                the model. Every tool result rides along on each later step
+#                of a skill's loop, so use it for large responses.
+#     as         for an array response: wrap as {"count": n, <as>: [...]}
+#     fields     {out_name: "dotted.path"} or {out_name: {from: path, fields: {...}}}
+#
+# NOT here: argument names, descriptions and schemas (the spec), and values a
+# call only works right with (the spec's x-agent hints -- ask the owning team).
+
+tools:
+
+  # --- customers service ------------------------------------------------------
+
+  find_customers:
+    operation: customers.listCustomers
+    group: customers
+    description: >-
+      Find customers by (part of) their name with `q`, or list them by segment,
+      region or active status. Use this to turn a company name into a
+      customer_id; if several match, say so rather than picking one.
+
+  get_customer:
+    operation: customers.getCustomer
+    group: customers
+    description: >-
+      One customer's profile by customer_id (CUST-1001 style): name, segment,
+      region, billing currency, contact email, signup date, credit limit and
+      whether they are still active. Also the way to put NAMES on customer ids
+      returned by the orders service.
+
+  # --- orders service ---------------------------------------------------------
+
+  list_orders:
+    operation: orders.listOrders
+    group: orders
+    cost_class: medium
+    description: >-
+      Orders, newest first, filtered by customer, status and date window. No
+      line items (use get_order). Raise `limit` for windows with many orders,
+      and say so if a result might be cut off at the limit.
+
+  get_order:
+    operation: orders.getOrder
+    group: orders
+    description: >-
+      One order by order_id (ORD-10001 style), with every line item: sku,
+      description, quantity, unit price and amount.
+
+  get_customer_order_summary:
+    operation: orders.getCustomerOrderSummary
+    group: orders
+    description: >-
+      One customer's order totals: order counts, revenue per currency (cancelled
+      and refunded orders excluded), open orders, first and last order dates.
+      The cheapest way to answer "how much has this customer spent".
+
+  rank_customers_by_spend:
+    operation: orders.getTopCustomers
+    group: orders
+    cost_class: medium
+    description: >-
+      Customers ranked by revenue in ONE currency, optionally within a date
+      window. Returns customer ids only -- call get_customer for names. For a
+      question without a currency, rank each currency (USD and EUR) separately;
+      never add amounts across currencies.

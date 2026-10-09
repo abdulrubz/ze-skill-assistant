@@ -1,0 +1,14 @@
+id: table_composition
+kind: output
+summary: Writes the final answer with a table, for list-shaped and ranking questions.
+answers: []
+intents: []
+requires: []
+provides: []
+cannot: []
+caveats: []
+tool_grants: []
+prefer_table: true
+cost_class: low
+max_tool_steps: 0
+prompt: table_composition.md

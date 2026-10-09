@@ -1,0 +1,14 @@
+id: prose_synthesis
+kind: output
+summary: Writes the final answer as cited prose. The default output.
+answers: []
+intents: []
+requires: []
+provides: []
+cannot: []
+caveats: []
+tool_grants: []
+prefer_table: false
+cost_class: low
+max_tool_steps: 0
+prompt: prose_synthesis.md

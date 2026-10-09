@@ -1,0 +1,11 @@
+id: general
+display_name: General
+summary: Every skill. The default.
+scope:
+  tool_deny: []
+skills:
+  - customer_profile
+  - order_analysis
+  - prose_synthesis
+  - table_composition
+max_retries: 2

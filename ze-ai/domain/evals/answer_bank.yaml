@@ -1,0 +1,80 @@
+# Answer-correctness bank: end-to-end questions with ground truth.
+#
+#   python scripts/langfuse_eval.py sync && python scripts/langfuse_eval.py run --bank answer --label baseline
+#   python scripts/eval_cost.py --repeat 3          # cost + quality, no Langfuse needed
+#
+# `truth` was computed from ze-mock-services' seed data (fixed seed, fixed
+# dates) with AS_OF_DATE=2026-10-01; "last quarter" etc. are relative to that.
+# Re-derive it if the seed changes. `expect` = substrings the answer blob (text
+# + cited fact values, lowercased) must contain, written to survive formatting:
+# amounts leave out the thousands group ("653" matches "21,653.00" and
+# "21653.0"). `trap` names the mistake the question is designed to catch.
+#
+# Replace these with your own domain's questions; keep the shape.
+
+questions:
+  - q: "Who are our top 3 customers by spend in USD?"
+    skills: [order_analysis]
+    expect: ["initech", "monarch", "prestige", "653", "429", "940"]
+    truth: >
+      1. Initech Inc (CUST-1003) 21,653.00 USD over 12 orders; 2. Monarch Group
+      (CUST-1019) 21,429.00 USD over 14 orders; 3. Prestige LLC (CUST-1021)
+      19,940.00 USD over 12 orders. Cancelled and refunded orders are excluded.
+    trap: "giving customer ids without names (names live in the customers service)"
+
+  - q: "Which customers spent the most overall?"
+    skills: [order_analysis]
+    expect: ["initech", "umbrella"]
+    truth: >
+      Ranked separately per currency, never summed across them. USD: Initech Inc
+      21,653.00, Monarch Group 21,429.00, Prestige LLC 19,940.00. EUR: Umbrella
+      GmbH 13,402.00, Stark LLC 11,038.00, Soylent Inc 6,337.00.
+    trap: "one ranking that mixes USD and EUR amounts"
+
+  - q: "How much has Globex spent with us?"
+    skills: [order_analysis]
+    expect: ["3853", "eur"]
+    truth: >
+      Globex Ltd (CUST-1002) has 3 orders, all counted, totalling 3,853.00 EUR.
+      No open orders; the last order was on 2026-02-11.
+    trap: "not resolving the name to CUST-1002 first"
+
+  - q: "What is in order ORD-10005?"
+    skills: [order_analysis]
+    expect: ["3217", "enterprise licence", "support add-on", "storage"]
+    truth: >
+      ORD-10005, Acme Corp (CUST-1001), 2025-06-12, delivered, 3,217.00 USD:
+      3 x Enterprise licence at 899 = 2,697; 2 x Support add-on at 120 = 240;
+      8 x Extra storage (1 TB) at 35 = 280.
+    trap: "line amounts that do not add up to the total"
+
+  - q: "Tell me about customer CUST-1004"
+    skills: [customer_profile]
+    expect: ["umbrella", "mid_market", "15000"]
+    truth: >
+      Umbrella GmbH, mid_market segment, EU region, billed in EUR, contact
+      billing@umbrella.example, signed up 2026-02-17, credit limit 15,000, active.
+    trap: null
+
+  - q: "Which customers have churned?"
+    skills: [customer_profile]
+    expect: ["yoyodyne"]
+    truth: "One: Yoyodyne Inc (CUST-1029) is the only inactive customer."
+    trap: "listing customers with no recent orders instead of active=false"
+
+  - q: "List our enterprise customers"
+    skills: [customer_profile]
+    expect: ["initech", "aperture", "monarch", "prestige", "wernham"]
+    truth: >
+      Five, all in APAC: Initech Inc (CUST-1003), Aperture LLC (CUST-1017),
+      Monarch Group (CUST-1019), Prestige LLC (CUST-1021), Wernham Group (CUST-1027).
+    trap: null
+
+  - q: "Which orders were refunded last quarter?"
+    skills: [order_analysis]
+    expect: ["10077", "10203", "10011", "10087"]
+    truth: >
+      Four, all USD, between 2026-07-03 and 2026-10-01: ORD-10077 (CUST-1011,
+      210.00), ORD-10203 (CUST-1028, 398.00), ORD-10011 (CUST-1003, 199.00),
+      ORD-10087 (CUST-1014, 240.00).
+    trap: "counting refunded orders as revenue"

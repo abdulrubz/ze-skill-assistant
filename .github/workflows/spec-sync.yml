@@ -1,0 +1,47 @@
+# When a spec lands on main, regenerate ze-ai's tools and open a PR.
+#
+# In this monorepo ze-ai syncs straight from the sibling folder
+# (SPEC_REPO_PATH=../ze-api-specs), so no cross-repo token is needed. The PR
+# shows exactly which specs and tool schemas moved; ze-ai's drift check runs
+# on it, so a spec change that breaks a configured tool fails the PR instead
+# of quietly degrading answers. Tools never change at runtime.
+#
+# Needs: Settings -> Actions -> General -> "Allow GitHub Actions to create and
+# approve pull requests" switched on.
+name: spec-sync
+on:
+  push:
+    branches: [main]
+    paths: ["ze-api-specs/services/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ze-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.12 && uv pip install -e ".[dev]"
+      - name: sync specs and regenerate
+        id: sync
+        env:
+          SPEC_REPO_PATH: ../ze-api-specs
+        run: |
+          set +e
+          .venv/bin/python scripts/tool_spec.py sync | tee sync.log
+          echo "check=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: spec-sync
+          commit-message: "ze-ai: sync API specs and regenerate tools"
+          title: "ze-ai: sync API specs${{ steps.sync.outputs.check != '0' && ' (tools.yaml needs attention)' || '' }}"
+          body-path: ze-ai/sync.log
+          add-paths: |
+            ze-ai/specs/**
+            ze-ai/generated/**
+            ze-ai/specs.lock.json
