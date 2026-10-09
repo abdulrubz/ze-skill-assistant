@@ -1,7 +1,7 @@
 {
  "_generated": "by scripts/tool_spec.py generate from specs/orders.openapi.json. Do not edit: regenerate.",
  "service": "orders",
- "spec_sha256": "28265e92e1fd6951343a3b14bdba8a731ebc20dfbe9bef57d72592261c92be5b",
+ "spec_sha256": "d63b1f093728393af24c438e5b92905910f9cad9c4a7b6ab3cfabc8d8e8a7f6c",
  "operations": {
   "orders.cancelOrder": {
    "service": "orders",

@@ -1,7 +1,7 @@
 {
  "_generated": "by scripts/tool_spec.py generate from specs/customers.openapi.json. Do not edit: regenerate.",
  "service": "customers",
- "spec_sha256": "d5dcc718678604f19dd573ed1ed7cf84ce3aa41f36dc67161182f472869c5983",
+ "spec_sha256": "131124639b2a09abd448342afe060c504ee789ca26eae4ee8589961a870d85e0",
  "operations": {
   "customers.getCustomer": {
    "service": "customers",
